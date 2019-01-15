@@ -54,13 +54,15 @@ cd `dirname $0`
 mkdir -p src
 mkdir -p build
 
-for p in ${DEPENDENCIES[@]}; do
-	if ! dpkg -l "$p" &> /dev/null; then
-		printf "dependency $p missing. tuxmark depends on the following packages: \n"
-		printf "%s\n" "${DEPENDENCIES[@]}"
+for p in "${DEPENDENCIES[@]}"; do
+	dpkg -l "$p" | grep "^ii" &> /dev/null || {
+		printf "dependency $p missing. tuxmark depends on the following packages: \n";
+		printf "%s\n" "${DEPENDENCIES[@]}";
 		exit 11
-	fi
+	}
 done
+
+exit 22
 
 if [ ! -f "src/$KVERSION.tar.xz" ]; then
 	echo "need to download the linux kernel first."
