@@ -62,8 +62,6 @@ for p in "${DEPENDENCIES[@]}"; do
 	}
 done
 
-exit 22
-
 if [ ! -f "src/$KVERSION.tar.xz" ]; then
 	echo "need to download the linux kernel first."
 	wget "$DOWNLOAD_URL" -q --show-progress -P src/
