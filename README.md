@@ -4,7 +4,9 @@ tuxmark is a set of benchmarks for headless linux systems.
 
 ## tuxmark-cats
 
-tuxmark-cats uses a convolutional neural network to classify a set of ofer 1000 cat pictures and calculates a score based on the time needed to classify all images.
+![Cat](var/testing_data/cats/cat.4061.jpg)
+
+tuxmark-cats uses a convolutional neural network to classify a set of over 1000 cat pictures and calculates a score based on the time needed to classify all images.
 To start the benchmark run the tuxmark-cats.sh bash script. On first run, a python virtual environment will be created and the python dependencies installed. 
 Make sure you install the system dependencies before running tuxmark-cats
 `apt install python3-pip bc libxrender-dev libsm6 libxext6`
