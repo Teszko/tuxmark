@@ -8,6 +8,18 @@ DEPENDENCIES=("python3-pip" "bc" "libxrender-dev" "libsm6" "libxext6")
 #TMPFS=1
 NPROC=$(nproc)
 
+function setup () {
+	if [ ! -d "venv" ]; then
+		printf "Installing Python dependencies in virtual environment\n"
+		pyvenv venv
+		source venv/bin/activate
+		pip install -r requirements.txt
+	fi
+
+	source venv/bin/activate
+	
+}
+
 function evaluation () {
 	score=$( echo "12222222/$1" | bc);
 	catsps=$( echo "$catcount/$1" | bc -l);
@@ -49,6 +61,7 @@ echo "cats per second benchmark v$VERSION";
 
 cd `dirname $0`
 
+type dpkg > /dev/null 2>&1 && {
 for p in "${DEPENDENCIES[@]}"; do
 	dpkg -l "$p" | grep "^ii" &> /dev/null || {
 		printf "dependency $p missing. tuxmark depends on the following packages: \n";
@@ -56,6 +69,7 @@ for p in "${DEPENDENCIES[@]}"; do
 		exit 11
 	}
 done
+}
 
 if [ -n "$TMPFS" ]; then
 	# tmpfs needs root
@@ -67,11 +81,13 @@ if [ -n "$TMPFS" ]; then
 	mount -t tmpfs -o size=2048m tmpfs build || { printf "failed to mount tmpfs. Not enough RAM?\n"; exit 23;}	
 fi
 
-printf "classifying cats\n"
+setup;
+
+printf "\nclassifying cats\n"
 
 catcount=0
 ts=$(date +%s%N)
-for f in var/testing_data/cats/cat.45*.jpg; do
+for f in var/testing_data/cats/cat.*.jpg; do
 	catcount=$((catcount+1))
 	while (( (( $(jobs -p | wc -l) )) >= $NPROC )) ; do 
 		sleep 0.05

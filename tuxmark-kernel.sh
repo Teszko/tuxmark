@@ -7,7 +7,7 @@ VERSION="0.2.1"
 DOWNLOAD_URL="https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.20.2.tar.xz"
 KVERSION="linux-4.20.2"
 DEPENDENCIES=("build-essential" "libncurses5" "bison" "flex" "libssl-dev" "libelf-dev")
-TMPFS=1
+#TMPFS=1
 NPROC=$(nproc)
 ARCH="x86"
 
@@ -54,6 +54,7 @@ cd `dirname $0`
 mkdir -p src
 mkdir -p build
 
+type dpkg > /dev/null 2>&1 && {
 for p in "${DEPENDENCIES[@]}"; do
 	dpkg -l "$p" | grep "^ii" &> /dev/null || {
 		printf "dependency $p missing. tuxmark depends on the following packages: \n";
@@ -61,11 +62,14 @@ for p in "${DEPENDENCIES[@]}"; do
 		exit 11
 	}
 done
+}
 
 if [ ! -f "src/$KVERSION.tar.xz" ]; then
 	echo "need to download the linux kernel first."
 	wget "$DOWNLOAD_URL" -q --show-progress -P src/
 fi
+
+printf "setting up...\n"
 
 if [ -n "$TMPFS" ]; then
 	# tmpfs needs root
